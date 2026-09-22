@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Моя профессия — конструктор интервью</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#182449;
+    --ink-soft:#3b4a7a;
+    --paper:#F6F2E8;
+    --paper-panel:#ffffff;
+    --marigold:#F2A93B;
+    --red:#E1483C;
+    --teal:#1E8A82;
+    --line:#182449;
+    --shadow:rgba(24,36,73,.14);
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  prefers-color-scheme: dark{
+    :root:not([data-theme="light"]){
+      --ink:#EDEBFF;
+      --ink-soft:#B9C0EA;
+      --paper:#12162B;
+      --paper-panel:#1B2140;
+      --marigold:#F2A93B;
+      --red:#FF6B5E;
+      --teal:#3FC6BB;
+      --line:#EDEBFF;
+      --shadow:rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#EDEBFF;--ink-soft:#B9C0EA;--paper:#12162B;--paper-panel:#1B2140;
+    --marigold:#F2A93B;--red:#FF6B5E;--teal:#3FC6BB;--line:#EDEBFF;--shadow:rgba(0,0,0,.5);
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Manrope',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Unbounded',sans-serif;}
+  .wrap{
+    max-width:720px;
+    margin:0 auto;
+    padding:18px 16px 40px;
+  }
+  /* ---- viewfinder header ---- */
+  .viewfinder{
+    position:relative;
+    border:2.5px solid var(--line);
+    border-radius:18px;
+    padding:16px 16px 14px;
+    background:var(--paper-panel);
+    margin-bottom:18px;
+  }
+  .viewfinder::before,.viewfinder::after,
+  .vf-corner-tl,.vf-corner-br{
+    content:'';
+    position:absolute;
+    width:20px;height:20px;
+    border-color:var(--marigold);
+  }
+  .vf-corner-tl{top:-3px;left:-3px;border-top:5px solid var(--marigold);border-left:5px solid var(--marigold);border-radius:8px 0 0 0;}
+  .vf-corner-br{bottom:-3px;right:-3px;border-bottom:5px solid var(--marigold);border-right:5px solid var(--marigold);border-radius:0 0 8px 0;}
+  .vf-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;}
+  .brand{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;letter-spacing:.02em;}
+  .rec-dot{width:9px;height:9px;border-radius:50%;background:var(--red);flex:none;}
+  .rec-dot.live{animation:pulse 1.4s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(1.25);}}
+  .step-tag{font-size:12px;color:var(--ink-soft);font-weight:700;}
+  h1.title{font-size:22px;line-height:1.25;margin:6px 0 4px;}
+  .subtitle{font-size:14px;color:var(--ink-soft);margin:0;}
+  /* progress rail */
+  .rail{display:flex;gap:5px;margin-top:14px;}
+  .rail span{flex:1;height:6px;border-radius:4px;background:color-mix(in srgb, var(--ink) 12%, transparent);}
+  .rail span.done{background:var(--teal);}
+  .rail span.active{background:var(--marigold);}
+  /* panel */
+  .panel{
+    background:var(--paper-panel);
+    border:1.5px solid color-mix(in srgb, var(--ink) 16%, transparent);
+    border-radius:16px;
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .panel h2{font-size:17px;margin:0 0 10px;}
+  .panel p{font-size:14.5px;line-height:1.55;color:var(--ink-soft);margin:0 0 10px;}
+  label.field-label{display:block;font-size:12.5px;font-weight:800;color:var(--ink-soft);margin:0 0 5px;text-transform:none;}
+  input[type=text], textarea, select{
+    width:100%;
+    font-family:'Manrope',sans-serif;
+    font-size:15px;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1.5px solid color-mix(in srgb, var(--ink) 25%, transparent);
+    background:var(--paper);
+    color:var(--ink);
+    resize:vertical;}
+  input[type=text]:focus, textarea:focus, select:focus, button:focus-visible, .chip:focus-visible{
+    outline:3px solid var(--marigold);
+    outline-offset:1px;
+  }
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .row > *{flex:1;min-width:140px;}
+  /* profession picker */
+  .prof-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0 4px;}
+  .prof-btn{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 10px;border-radius:12px;border:2px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    background:var(--paper);color:var(--ink);font-size:13.5px;font-weight:700;text-align:left;cursor:pointer;
+  }
+  .prof-btn .em{font-size:18px;}
+  .prof-btn.selected{border-color:var(--teal);background:color-mix(in srgb, var(--teal) 14%, var(--paper));}
+  /* buttons */
+  button.primary, button.ghost, button.chip{
+    font-family:'Manrope',sans-serif;font-weight:800;cursor:pointer;border-radius:12px;font-size:14.5px;
+  }
+  button.primary{
+    background:var(--ink);color:var(--paper);border:none;padding:13px 20px;width:100%;
+  }
+  button.primary:disabled{opacity:.4;cursor:not-allowed;}
+  button.ghost{
+    background:transparent;color:var(--ink);border:2px solid var(--ink);padding:11px 18px;
+  }
+  .nav-btns{display:flex;gap:10px;margin-top:6px;}
+  .nav-btns button{flex:1;}
+  /* category / question chooser */
+  .cat-block{border-top:1px dashed color-mix(in srgb, var(--ink) 25%, transparent);padding-top:12px;margin-top:12px;}
+  .cat-block:first-of-type{border-top:none;margin-top:0;padding-top:0;}
+  .cat-name{font-size:12.5px;font-weight:800;color:var(--teal);margin-bottom:6px;}
+  .q-option{
+    display:flex;align-items:flex-start;gap:9px;padding:8px 0;cursor:pointer;font-size:14.5px;line-height:1.4;
+  }
+  .q-option input{margin-top:3px;}
+  .selected-list{list-style:none;margin:0;padding:0;}
+  .selected-list li{
+    background:var(--paper);border:1.5px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius:10px;padding:9px 10px;margin-bottom:7px;font-size:14px;display:flex;justify-content:space-between;gap:8px;align-items:center;
+  }
+  .mini-x{background:none;border:none;color:var(--red);font-weight:900;cursor:pointer;font-size:15px;padding:2px 6px;}
+  .badge{
+    display:inline-block;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:20px;
+    background:color-mix(in srgb, var(--marigold) 30%, transparent);color:var(--ink);
+  }
+  /* ordering task */
+  .order-item{
+    display:flex;align-items:center;gap:10px;background:var(--paper);border:1.5px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius:10px;padding:10px;margin-bottom:8px;font-size:14px;
+  }
+  .order-item select{width:64px;flex:none;padding:6px;font-weight:800;}
+  .feedback{font-size:13.5px;font-weight:700;border-radius:10px;padding:9px 11px;margin-top:8px;display:none;}
+  .feedback.ok{display:block;background:color-mix(in srgb, var(--teal) 22%, transparent);color:var(--teal);}
+  .feedback.bad{display:block;background:color-mix(in srgb, var(--red) 18%, transparent);color:var(--red);}
+  /* quiz options */
+  .quiz-opt{
+    display:block;width:100%;text-align:left;padding:11px 12px;margin-bottom:8px;border-radius:11px;
+    border:1.5px solid color-mix(in srgb, var(--ink) 22%, transparent);background:var(--paper);color:var(--ink);
+    font-size:14.5px;line-height:1.4;cursor:pointer;font-family:'Manrope',sans-serif;
+  }
+  .quiz-opt.correct{border-color:var(--teal);background:color-mix(in srgb, var(--teal) 18%, transparent);}
+  .quiz-opt.wrong{border-color:var(--red);background:color-mix(in srgb, var(--red) 14%, transparent);}
+  .quiz-opt:disabled{cursor:default;}
+  /* checklist */
+  .check-row{display:flex;align-items:flex-start;gap:9px;padding:7px 0;font-size:14.5px;}
+  .check-row input{margin-top:3px;width:18px;height:18px;}
+  /* shoot stage */
+  .intro-card{
+    border:2px dashed var(--marigold);border-radius:12px;padding:12px 13px;font-size:14.5px;line-height:1.55;
+    background:color-mix(in srgb, var(--marigold) 10%, transparent);margin-bottom:14px;
+  }
+  .qcard{
+    border:1.5px solid color-mix(in srgb, var(--ink) 18%, transparent);border-radius:12px;padding:12px;margin-bottom:10px;
+  }
+  .qcard .qtext{font-weight:800;font-size:14.5px;margin-bottom:6px;}
+  .qcard .example{font-size:13px;color:var(--ink-soft);margin-bottom:8px;font-style:italic;}
+  .asked-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:13.5px;font-weight:700;}
+  /* article */
+  #articleBox{min-height:260px;font-size:14.5px;line-height:1.6;}
+  .toolbar{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+  .toolbar button{flex:1;min-width:140px;}
+  .score-card{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+  .score-pill{flex:1;min-width:130px;border-radius:12px;padding:10px;text-align:center;border:1.5px solid color-mix(in srgb, var(--ink) 18%, transparent);}
+  .score-pill .num{font-family:'Unbounded';font-size:20px;display:block;}
+  .footer-note{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="viewfinder">
+    <div class="vf-corner-tl"></div><div class="vf-corner-br"></div>
+    <div class="vf-top">
+      <div class="brand"><span class="rec-dot" id="recDot"></span> МОЯ ПЕРВАЯ ГАЗЕТА · МЕДИАЦЕНТР</div>
+      <div class="step-tag" id="stepTag">Шаг 1 из 6</div>
+    </div>
+    <h1 class="title" id="stageTitle">Моя профессия</h1>
+    <p class="subtitle" id="stageSubtitle">Конструктор интервью — от вопросов до заметки в газету</p>
+    <div class="rail" id="rail"></div>
+  </div>
+
+  <div id="stage"></div>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- content data ---------------- */
+var CATS = [
+  {id:'sut', name:'Суть работы'},
+  {id:'put', name:'Путь в профессию'},
+  {id:'navyki', name:'Качества и навыки'},
+  {id:'trudnosti', name:'Сложности профессии'},
+  {id:'case', name:'Случай из практики'},
+  {id:'sovet', name:'Совет школьникам'}
+];
+
+var PROFESSIONS = [
+  {id:'doctor', name:'Врач-педиатр', em:'🩺', qa:{
+    sut:{q:'Что входит в ваши обязанности каждый день?', a:'Я осматриваю детей, слушаю жалобы родителей, ставлю диагноз и назначаю лечение. Иногда за день принимаю больше двадцати маленьких пациентов.'},
+    put:{q:'Как вы пришли в профессию врача, где учились?', a:'Учился в медицинском университете шесть лет, потом два года в ординатуре по педиатрии. Практику начал ещё студентом — дежурил в больнице по ночам.'},
+    navyki:{q:'Какие качества и навыки нужны врачу?', a:'Важны терпение, внимательность к деталям и умение спокойно объяснять сложные вещи родителям. И, конечно, нужно постоянно учиться — медицина быстро меняется.'},
+    trudnosti:{q:'С какими трудностями вы сталкиваетесь в работе?', a:'Сложнее всего — сообщать неприятные новости и работать при высокой нагрузке, когда пациентов много, а времени на каждого мало.'},
+    case:{q:'Расскажите о запоминающемся случае из практики', a:'Однажды ребёнок боялся уколов до слёз, и я десять минут показывал ему, как «укол» делают его игрушечному мишке. С тех пор он приходит без страха.'},
+    sovet:{q:'Что посоветуете школьникам, которые хотят стать врачом?', a:'Уже сейчас налегайте на биологию и химию, читайте научно-популярные книги о медицине и не бойтесь спрашивать — любопытство в этой профессии главный инструмент.'}
+  }},
+  {id:'firefighter', name:'Пожарный-спасатель', em:'🚒', qa:{
+    sut:{q:'Что входит в обязанности пожарного?', a:'Мы тушим пожары, спасаем людей из завалов и машин, а ещё проверяем здания на пожарную безопасность и учим людей, как вести себя при возгорании.'},
+    put:{q:'Как вы пришли в профессию, где учились?', a:'Окончил пожарно-техническое училище, потом полгода стажировался в части рядом со старшими коллегами — это была самая настоящая школа выдержки.'},
+    navyki:{q:'Какие качества и навыки нужны спасателю?', a:'Нужна физическая выносливость, быстрая реакция и умение сохранять холодную голову, когда вокруг паника. Ещё очень важна работа в команде.'},
+    trudnosti:{q:'С какими трудностями вы сталкиваетесь в работе?', a:'Тяжело морально, когда не успеваешь спасти всё и всех. А физически — сама форма и оборудование весят почти двадцать килограм
