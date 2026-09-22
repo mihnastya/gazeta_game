@@ -588,23 +588,31 @@ function renderGear(){
 /* ---------------- stage 3: position ---------------- */
 function renderFrame(){
   var html = '<div class="panel"><h2>Как встать перед камерой?</h2><p>Выбери правильный вариант.</p>';
+  
+  // Проверяем, какой вариант выбран и правильный ли он
+  var isCorrect = false;
+  if (state.posChosen) {
+    var selectedOption = POSITION_OPTIONS.filter(function(o){ return o.id === state.posChosen; })[0];
+    if (selectedOption && selectedOption.ok) {
+      isCorrect = true;
+    }
+  }
+  
   POSITION_OPTIONS.forEach(function(opt){
     var cls = 'quiz-opt';
-    if(state.posChecked && state.posChosen===opt.id){ cls += opt.ok ? ' correct':' wrong'; }
-    if(state.posChecked && opt.ok){ cls += ' correct'; }
+    // Подсвечиваем только тот вариант, на который кликнули
+    if(state.posChecked && state.posChosen === opt.id){ 
+      cls += opt.ok ? ' correct' : ' wrong'; 
+    }
     html += '<button class="'+cls+'" data-opt="'+opt.id+'">'+esc(opt.text)+'</button>';
-
   });
-    // Выводим адаптивный фидбек
-  var currentOpt = state.posChosen ? POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0] : null;
-  var isCorrect = currentOpt ? currentOpt.ok : false;
   
+  // Выводим подсказку
   html += '<div class="feedback '+(state.posChecked ? (isCorrect ? 'ok':'bad') : '')+'" style="'+(state.posChecked?'':'display:none;')+'">';
   if(state.posChecked) {
     html += isCorrect ? 'Верно! Вполоборота и лицом к свету — так снимать удобнее всего.' : 'Не совсем: свет должен падать на лицо, а собеседник — стоять вполоборота, не вплотную и не спиной к окну. Попробуй выбрать другой вариант сверху!';
   }
   html += '</div></div>';
-v>';
  
   html += '<div class="panel"><h2>Чёткая речь: перед записью проверь себя</h2>';
   var d = state.diction;
@@ -613,7 +621,7 @@ v>';
   html += checkRow('d3','Вопросы под рукой, но я не читаю их слово в слово', d.d3);
   html += '</div>';
  
-    // Продвигаться дальше можно ТОЛЬКО если в итоге выбран ПРАВИЛЬНЫЙ вариант
+  // Кнопка далее активна ТОЛЬКО если выбран правильный ответ
   var canProceed = state.posChecked && isCorrect;
   html += '<div class="nav-btns"><button class="ghost" id="backBtn">Назад</button><button class="primary" id="nextBtn" '+(canProceed?'':'disabled')+'>Дальше — съёмка</button></div>';
   if(!canProceed) html += '<p class="footer-note">Выбери верный вариант положения в кадре, чтобы продолжить.</p>';
@@ -624,7 +632,8 @@ v>';
     btn.addEventListener('click', function(){
       state.posChosen = parseInt(btn.getAttribute('data-opt'),10);
       state.posChecked = true;
-      save(); renderFrame();
+      save(); 
+      renderFrame(); 
     });
   });
   ['d1','d2','d3'].forEach(function(key){
