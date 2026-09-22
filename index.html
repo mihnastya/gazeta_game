@@ -592,7 +592,8 @@ function renderFrame(){
     var cls = 'quiz-opt';
     if(state.posChecked && state.posChosen===opt.id){ cls += opt.ok ? ' correct':' wrong'; }
     if(state.posChecked && opt.ok){ cls += ' correct'; }
-    html += '<button class="'+cls+'" data-opt="'+opt.id+'" '+(state.posChecked?'disabled':'')+'>'+esc(opt.text)+'</button>';
+    html += '<button class="'+cls+'" data-opt="'+opt.id+'">'+esc(opt.text)+'</button>';
+
   });
   html += '<div class="feedback '+(state.posChecked ? (POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0].ok ? 'ok':'bad') : '')+'" style="'+(state.posChecked?'':'display:none;')+'">';
   html += state.posChecked ? (POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0].ok ? 'Верно! Вполоборота и лицом к свету — так снимать удобнее всего.' : 'Не совсем: свет должен падать на лицо, а собеседник — стоять вполоборота, не вплотную и не спиной к окну.') : '';
