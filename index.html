@@ -24,7 +24,7 @@
   }
   *{box-sizing:border-box;}
   html{scroll-padding-top:env(safe-area-inset-top,0px);}
-  prefers-color-scheme: dark{
+  @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
       --ink:#EDEBFF;
       --ink-soft:#B9C0EA;
@@ -106,7 +106,8 @@
     border:1.5px solid color-mix(in srgb, var(--ink) 25%, transparent);
     background:var(--paper);
     color:var(--ink);
-    resize:vertical;}
+    resize:vertical;
+  }
   input[type=text]:focus, textarea:focus, select:focus, button:focus-visible, .chip:focus-visible{
     outline:3px solid var(--marigold);
     outline-offset:1px;
@@ -197,7 +198,7 @@
 </head>
 <body>
 <div class="wrap">
-
+ 
   <div class="viewfinder">
     <div class="vf-corner-tl"></div><div class="vf-corner-br"></div>
     <div class="vf-top">
@@ -208,15 +209,15 @@
     <p class="subtitle" id="stageSubtitle">Конструктор интервью — от вопросов до заметки в газету</p>
     <div class="rail" id="rail"></div>
   </div>
-
+ 
   <div id="stage"></div>
-
+ 
 </div>
-
+ 
 <script>
 (function(){
 "use strict";
-
+ 
 /* ---------------- content data ---------------- */
 var CATS = [
   {id:'sut', name:'Суть работы'},
@@ -226,7 +227,7 @@ var CATS = [
   {id:'case', name:'Случай из практики'},
   {id:'sovet', name:'Совет школьникам'}
 ];
-
+ 
 var PROFESSIONS = [
   {id:'doctor', name:'Врач-педиатр', em:'🩺', qa:{
     sut:{q:'Что входит в ваши обязанности каждый день?', a:'Я осматриваю детей, слушаю жалобы родителей, ставлю диагноз и назначаю лечение. Иногда за день принимаю больше двадцати маленьких пациентов.'},
@@ -240,4 +241,547 @@ var PROFESSIONS = [
     sut:{q:'Что входит в обязанности пожарного?', a:'Мы тушим пожары, спасаем людей из завалов и машин, а ещё проверяем здания на пожарную безопасность и учим людей, как вести себя при возгорании.'},
     put:{q:'Как вы пришли в профессию, где учились?', a:'Окончил пожарно-техническое училище, потом полгода стажировался в части рядом со старшими коллегами — это была самая настоящая школа выдержки.'},
     navyki:{q:'Какие качества и навыки нужны спасателю?', a:'Нужна физическая выносливость, быстрая реакция и умение сохранять холодную голову, когда вокруг паника. Ещё очень важна работа в команде.'},
-    trudnosti:{q:'С какими трудностями вы сталкиваетесь в работе?', a:'Тяжело морально, когда не успеваешь спасти всё и всех. А физически — сама форма и оборудование весят почти двадцать килограм
+    trudnosti:{q:'С какими трудностями вы сталкиваетесь в работе?', a:'Тяжело морально, когда не успеваешь спасти всё и всех. А физически — сама форма и оборудование весят почти двадцать килограммов.'},
+    case:{q:'Расскажите о запоминающемся случае из практики', a:'Мы вытаскивали кота с высокого дерева на глазах у целого двора — казалось бы, мелочь, но именно тогда я понял, как людям важно, что мы рядом.'},
+    sovet:{q:'Что посоветуете школьникам, которые хотят стать спасателем?', a:'Занимайтесь спортом, учитесь плавать и не бояться высоты, а ещё пробуйте себя в кружках ОБЖ — там дают самые полезные первые навыки.'}
+  }},
+  {id:'chef', name:'Шеф-повар', em:'👨‍🍳', qa:{
+    sut:{q:'Что входит в обязанности шеф-повара?', a:'Я придумываю меню, слежу за качеством блюд на кухне и обучаю поваров. За вечер через мои руки проходит проверка сотни тарелок.'},
+    put:{q:'Как вы пришли в профессию, где учились?', a:'Учился в кулинарном колледже, а затем три года работал поваром на разных станциях кухни — от холодных закусок до горячего цеха, пока не дорос до шефа.'},
+    navyki:{q:'Какие качества и навыки нужны повару?', a:'Нужны острый вкус и обоняние, аккуратность и скорость — на кухне в час пик счёт идёт на секунды. И, конечно, любовь к экспериментам.'},
+    trudnosti:{q:'С какими трудностями вы сталкиваетесь в работе?', a:'Самое сложное — работать стоя по десять-двенадцать часов и держать одинаково высокое качество блюда, даже когда заказов сто пятьдесят за вечер.'},
+    case:{q:'Расскажите о запоминающемся случае из практики', a:'Однажды за час до банкета сломалась печь, и мы за пятнадцать минут переделали половину меню на альтернативные блюда. Гости даже не заметили.'},
+    sovet:{q:'Что посоветуете школьникам, которые хотят стать поваром?', a:'Готовьте дома как можно чаще, пробуйте новые продукты и не бойтесь испортить блюдо — на ошибках повара учатся быстрее всего.'}
+  }},
+  {id:'vet', name:'Ветеринар', em:'🐾', qa:{
+    sut:{q:'Что входит в обязанности ветеринара?', a:'Осматриваю животных, ставлю диагнозы, делаю операции и прививки. Пациенты у меня очень разные — от хомяков до крупных собак.'},
+    put:{q:'Как вы пришли в профессию, где учились?', a:'Пять лет учился в ветеринарной академии, а любовь к животным появилась ещё в детстве — я подбирал бездомных котят во дворе.'},
+    navyki:{q:'Какие качества и навыки нужны ветеринару?', a:'Нужны спокойные руки, терпение и умение находить общий язык не только с животным, но и с встревоженным хозяином.'},
+    trudnosti:{q:'С какими трудностями вы сталкиваетесь в работе?', a:'Пациент не может объяснить словами, что у него болит, поэтому приходится быть немного детективом. И тяжело, когда не всегда удаётся помочь.'},
+    case:{q:'Расскажите о запоминающемся случае из практики', a:'Однажды принесли попугая, который перестал летать — оказалось, он просто наелся и обленился. Хозяева боялись худшего, а я впервые за день посмеялся.'},
+    sovet:{q:'Что посоветуете школьникам, которые хотят стать ветеринаром?', a:'Читайте о биологии животных, помогайте в приютах хотя бы волонтёром — так вы поймёте, готовы ли вы к этой ответственности.'}
+  }},
+  {id:'police', name:'Следователь', em:'🕵️', qa:{
+    sut:{q:'Что входит в обязанности следователя?', a:'Я разбираюсь в обстоятельствах происшествий, опрашиваю свидетелей и собираю доказательства, чтобы установить, что произошло на самом деле.'},
+    put:{q:'Как вы пришли в профессию, где учились?', a:'Окончил юридический институт по специальности «следствие», а первые два года работал помощником следователя — учился на реальных делах.'},
+    navyki:{q:'Какие качества и навыки нужны следователю?', a:'Важны логическое мышление, внимание к мелочам и умение задавать правильные вопросы. Ещё нужна выдержка — не все разговоры бывают лёгкими.'},
+    trudnosti:{q:'С какими трудностями вы сталкиваетесь в работе?', a:'Сложно, когда фактов мало, а решение нужно принять быстро. И приходится видеть не самые приятные стороны жизни.'},
+    case:{q:'Расскажите о запоминающемся случае из практики', a:'Одно дело раскрыла соседская запись с видеорегистратора — деталь, на которую все чуть не махнули рукой. С тех пор я всегда проверяю «неважные» мелочи.'},
+    sovet:{q:'Что посоветуете школьникам, которые хотят стать следователем?', a:'Развивайте логику — шахматы и головоломки отлично тренируют мышление, и обязательно налегайте на обществознание и русский язык: документы придётся писать грамотно.'}
+  }},
+  {id:'programmer', name:'Программист', em:'💻', qa:{
+    sut:{q:'Что входит в обязанности программиста?', a:'Я пишу код для приложений и сайтов, ищу и исправляю ошибки, а ещё много обсуждаю с командой, как лучше решить задачу, прежде чем сесть за клавиатуру.'},
+    put:{q:'Как вы пришли в профессию, где учились?', a:'Учился на факультете информатики, но многое освоил сам — по видеоурокам и пробуя писать маленькие программы ещё в школе.'},
+    navyki:{q:'Какие качества и навыки нужны программисту?', a:'Нужны логическое мышление и усидчивость, умение гуглить и не сдаваться, когда код не работает с первого раза — а он почти никогда не работает с первого раза.'},
+    trudnosti:{q:'С какими трудностями вы сталкиваетесь в работе?', a:'Технологии меняются очень быстро, приходится постоянно учиться. А ещё бывает трудно найти одну ошибку среди тысяч строк кода.'},
+    case:{q:'Расскажите о запоминающемся случае из практики', a:'Однажды сайт «упал» за час до презентации, а причиной оказалась одна лишняя запятая. Нашли её командой всего за десять минут — и успели.'},
+    sovet:{q:'Что посоветуете школьникам, которые хотят стать программистом?', a:'Начните с простого языка вроде Python, делайте маленькие проекты для себя и не бойтесь ошибок — они часть работы каждого программиста.'}
+  }},
+  {id:'designer', name:'Дизайнер', em:'🎨', qa:{
+    sut:{q:'Что входит в обязанности дизайнера?', a:'Я придумываю, как должны выглядеть продукт, сайт или упаковка — от общей идеи до мелких деталей вроде шрифта и цвета.'},
+    put:{q:'Как вы пришли в профессию, где учились?', a:'Учился в художественном колледже, а насмотренность и вкус развивал сам — ходил на выставки и разбирал чужие работы, пытаясь понять, почему они работают.'},
+    navyki:{q:'Какие качества и навыки нужны дизайнеру?', a:'Нужны чувство вкуса, внимание к деталям и умение слушать заказчика — часто важнее не «красиво», а «понятно и удобно».'},
+    trudnosti:{q:'С какими трудностями вы сталкиваетесь в работе?', a:'Сложно, когда идею приходится переделывать по десятому разу, и трудно объяснить словами, почему один вариант лучше другого.'},
+    case:{q:'Расскажите о запоминающемся случае из практики', a:'Один логотип мы переделывали пятнадцать раз, а в итоге клиенту понравился самый первый набросок, который мы чуть не выбросили.'},
+    sovet:{q:'Что посоветуете школьникам, которые хотят стать дизайнером?', a:'Рисуйте каждый день, даже понемногу, и учитесь замечать хороший и плохой дизайн вокруг — в упаковке, вывесках, приложениях.'}
+  }},
+  {id:'coach', name:'Тренер по спорту', em:'🏅', qa:{
+    sut:{q:'Что входит в обязанности тренера?', a:'Я строю тренировки, слежу за техникой каждого спортсмена и готовлю команду к соревнованиям — и физически, и морально.'},
+    put:{q:'Как вы пришли в профессию, где учились?', a:'Сам много лет занимался спортом, а потом окончил институт физической культуры, чтобы учить этому уже других.'},
+    navyki:{q:'Какие качества и навыки нужны тренеру?', a:'Нужны терпение, умение мотивировать и замечать маленький прогресс, даже когда результат ещё не виден на табло.'},
+    trudnosti:{q:'С какими трудностями вы сталкиваетесь в работе?', a:'Тяжело, когда спортсмен теряет мотивацию после поражения, и моя задача — помочь ему не бросить, а разобрать ошибки и идти дальше.'},
+    case:{q:'Расскажите о запоминающемся случае из практики', a:'Один ученик проигрывал все соревнования два года подряд, а потом впервые встал на пьедестал — для меня это было важнее любой своей медали.'},
+    sovet:{q:'Что посоветуете школьникам, которые хотят стать тренером?', a:'Занимайтесь спортом сами как можно дольше и учитесь объяснять другим — попробуйте разок помочь младшим ребятам на тренировке.'}
+  }}
+];
+ 
+var CAT_MAP = {}; CATS.forEach(function(c){ CAT_MAP[c.id]=c.name; });
+ 
+/* mic assembly correct order (statements) */
+var MIC_STEPS = [
+  {id:'a', text:'Достать петличный микрофон и проверить, что батарейка/заряд передатчика в порядке'},
+  {id:'b', text:'Спрятать передатчик в карман или за пояс, вывести провод под одеждой наверх'},
+  {id:'c', text:'Закрепить капсюль микрофона на одежде на уровне груди, в 15–20 см от рта, чуть в сторону от прямого потока дыхания'},
+  {id:'d', text:'Дать короткую фразу на пробу и проверить звук в наушниках или на камере'}
+];
+var MIC_CORRECT = ['a','b','c','d'];
+ 
+var POSITION_OPTIONS = [
+  {id:1, text:'Встать строго анфас к камере, руки по швам, спиной к окну', ok:false},
+  {id:2, text:'Встать вполоборота к камере (примерно на 45°), лицом к источнику света, не спиной к окну', ok:true},
+  {id:3, text:'Встать вплотную к собеседнику, чтобы оба точно попали в кадр одним крупным планом', ok:false},
+  {id:4, text:'Сесть ниже собеседника и смотреть на него снизу вверх', ok:false}
+];
+ 
+/* ---------------- state ---------------- */
+var STEP_NAMES = ['Профессия','Вопросы','Экипировка','Кадр','Съёмка','Заметка'];
+var state = {
+  step:0,
+  school:'',
+  profId:'', customProf:'',
+  selectedQ:[],           // [{catId, q, a}]
+  micOrder:{a:'',b:'',c:'',d:''},
+  micChecked:false,
+  posChosen:null,
+  posChecked:false,
+  diction:{d1:false,d2:false,d3:false},
+  askedNotes:{},          // key -> {asked:bool, note:text}
+  article:''
+};
+ 
+try{
+  var saved = localStorage.getItem('mp_state_v1');
+  if(saved){ var parsed = JSON.parse(saved); Object.assign(state, parsed); }
+}catch(e){}
+ 
+function save(){
+  try{ localStorage.setItem('mp_state_v1', JSON.stringify(state)); }catch(e){}
+}
+ 
+function currentProfession(){
+  if(state.profId==='custom') return {id:'custom', name: state.customProf || 'Своя профессия', em:'📰', qa:null};
+  var p = PROFESSIONS.filter(function(p){return p.id===state.profId;})[0];
+  return p || null;
+}
+ 
+/* ---------------- render shell ---------------- */
+var railEl = document.getElementById('rail');
+var stepTagEl = document.getElementById('stepTag');
+var titleEl = document.getElementById('stageTitle');
+var subEl = document.getElementById('stageSubtitle');
+var stageEl = document.getElementById('stage');
+var recDot = document.getElementById('recDot');
+ 
+var STAGE_META = [
+  {title:'Выбери профессию', sub:'Кого вы будете снимать для медиацентра?'},
+  {title:'Собери вопросы', sub:'Конструктор интервью по темам'},
+  {title:'Экипировка репортёра', sub:'Проверь, умеешь ли ты подключать петличный микрофон'},
+  {title:'Встань в кадр', sub:'Как правильно стоять перед камерой'},
+  {title:'Съёмка интервью', sub:'Скажи вступление, задай вопросы и отметь ответы'},
+  {title:'Заметка в газету', sub:'Собери короткий материал по итогам интервью'}
+];
+ 
+function renderRail(){
+  railEl.innerHTML = '';
+  STAGE_META.forEach(function(_, i){
+    var s = document.createElement('span');
+    if(i < state.step) s.className='done';
+    else if(i === state.step) s.className='active';
+    railEl.appendChild(s);
+  });
+}
+ 
+function esc(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+ 
+function goto(step){
+  state.step = Math.max(0, Math.min(5, step));
+  save();
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+ 
+/* ---------------- stage 0: profession ---------------- */
+function renderProfession(){
+  var html = '<div class="panel">';
+  html += '<label class="field-label">Номер школы (для вступления в эфире)</label>';
+  html += '<input type="text" id="schoolInput" placeholder="например, 25" value="'+esc(state.school)+'">';
+  html += '</div>';
+ 
+  html += '<div class="panel"><h2>Кого берём в герои материала?</h2>';
+  html += '<div class="prof-grid">';
+  PROFESSIONS.forEach(function(p){
+    var sel = state.profId===p.id ? ' selected' : '';
+    html += '<button class="prof-btn'+sel+'" data-prof="'+p.id+'"><span class="em">'+p.em+'</span>'+p.name+'</button>';
+  });
+  var selCustom = state.profId==='custom' ? ' selected' : '';
+  html += '<button class="prof-btn'+selCustom+'" data-prof="custom"><span class="em">📰</span>Своя профессия</button>';
+  html += '</div>';
+ 
+  if(state.profId==='custom'){
+    html += '<label class="field-label" style="margin-top:10px;">Название профессии куратора</label>';
+    html += '<input type="text" id="customProfInput" placeholder="например, эколог" value="'+esc(state.customProf)+'">';
+    html += '<p style="margin-top:8px;">Для своей профессии банка примеров нет — вопросы и ответы вы соберёте сами на шагах дальше.</p>';
+  }
+  html += '</div>';
+ 
+  html += '<button class="primary" id="nextBtn">Дальше — собрать вопросы</button>';
+  stageEl.innerHTML = html;
+ 
+  document.getElementById('schoolInput').addEventListener('input', function(e){ state.school = e.target.value; save(); });
+  stageEl.querySelectorAll('.prof-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.profId = btn.getAttribute('data-prof');
+      if(state.profId!=='custom'){ state.selectedQ = []; }
+      save(); renderProfession();
+    });
+  });
+  var cInput = document.getElementById('customProfInput');
+  if(cInput) cInput.addEventListener('input', function(e){ state.customProf = e.target.value; save(); });
+ 
+  document.getElementById('nextBtn').disabled = !(state.profId && (state.profId!=='custom' || state.customProf.trim()));
+  document.getElementById('nextBtn').addEventListener('click', function(){ goto(1); });
+}
+ 
+/* ---------------- stage 1: questions ---------------- */
+function isSelected(catId){
+  return state.selectedQ.some(function(x){return x.catId===catId;});
+}
+function toggleQuestion(catId, q, a){
+  var idx = state.selectedQ.findIndex(function(x){return x.catId===catId && x.q===q;});
+  if(idx>=0){ state.selectedQ.splice(idx,1); }
+  else { state.selectedQ.push({catId:catId, q:q, a:a||''}); }
+  save();
+}
+ 
+function renderQuestions(){
+  var prof = currentProfession();
+  var html = '';
+ 
+  if(prof && prof.qa){
+    html += '<div class="panel"><h2>Банк вопросов по темам</h2><p>Отметь хотя бы по одному вопросу в разных темах — так интервью получится полным.</p>';
+    CATS.forEach(function(cat){
+      var item = prof.qa[cat.id];
+      var checked = state.selectedQ.some(function(x){return x.catId===cat.id && x.q===item.q;});
+      html += '<div class="cat-block"><div class="cat-name">'+cat.name+'</div>';
+      html += '<label class="q-option"><input type="checkbox" data-cat="'+cat.id+'" data-q="'+esc(item.q)+'" '+(checked?'checked':'')+'> '+esc(item.q)+'</label>';
+      html += '</div>';
+    });
+    html += '</div>';
+ 
+    html += '<div class="panel"><h2>Свой вопрос (по желанию)</h2>';
+    html += '<div class="row"><select id="customCat">';
+    CATS.forEach(function(c){ html += '<option value="'+c.id+'">'+c.name+'</option>'; });
+    html += '</select></div>';
+    html += '<input type="text" id="customQInput" placeholder="Впиши свой вопрос куратору" style="margin-top:8px;">';
+    html += '<button class="ghost" id="addCustomQ" style="margin-top:8px;">Добавить вопрос</button>';
+    html += '</div>';
+  } else {
+    html += '<div class="panel"><h2>Свои вопросы для «'+esc(prof?prof.name:'')+'»</h2>';
+    html += '<p>Готового банка нет — напиши вопрос по каждой теме сам. Подсказка — тема слева.</p>';
+    CATS.forEach(function(cat){
+      html += '<div class="cat-block"><div class="cat-name">'+cat.name+'</div>';
+      html += '<input type="text" class="custom-cat-q" data-cat="'+cat.id+'" placeholder="Вопрос про '+cat.name.toLowerCase()+'…">';
+      html += '</div>';
+    });
+    html += '<button class="ghost" id="addAllCustom" style="margin-top:10px;">Сохранить эти вопросы</button>';
+    html += '</div>';
+  }
+ 
+  html += '<div class="panel"><h2>Твой сценарий интервью <span class="badge">'+state.selectedQ.length+' вопрос(ов)</span></h2>';
+  if(state.selectedQ.length===0){
+    html += '<p>Пока пусто — выбери или впиши вопросы выше.</p>';
+  } else {
+    html += '<ul class="selected-list">';
+    state.selectedQ.forEach(function(item, i){
+      html += '<li><span>'+(i+1)+'. '+esc(item.q)+' <span class="badge">'+CAT_MAP[item.catId]+'</span></span><button class="mini-x" data-remove="'+i+'">✕</button></li>';
+    });
+    html += '</ul>';
+  }
+  html += '</div>';
+ 
+  var covered = new Set(state.selectedQ.map(function(x){return x.catId;})).size;
+  html += '<div class="panel"><p style="margin:0;">Тем охвачено: <b>'+covered+' из '+CATS.length+'</b>. Чем больше тем — тем богаче будет заметка.</p></div>';
+ 
+  html += '<div class="nav-btns"><button class="ghost" id="backBtn">Назад</button><button class="primary" id="nextBtn" '+(state.selectedQ.length<3?'disabled':'')+'>Дальше — экипировка</button></div>';
+  if(state.selectedQ.length<3) html += '<p class="footer-note">Выбери минимум 3 вопроса, чтобы продолжить.</p>';
+ 
+  stageEl.innerHTML = html;
+ 
+  stageEl.querySelectorAll('input[type=checkbox][data-cat]').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var cat = cb.getAttribute('data-cat');
+      var item = prof.qa[cat];
+      toggleQuestion(cat, item.q, item.a);
+      renderQuestions();
+    });
+  });
+  var addBtn = document.getElementById('addCustomQ');
+  if(addBtn) addBtn.addEventListener('click', function(){
+    var cat = document.getElementById('customCat').value;
+    var q = document.getElementById('customQInput').value.trim();
+    if(q){ state.selectedQ.push({catId:cat, q:q, a:''}); save(); renderQuestions(); }
+  });
+  var addAll = document.getElementById('addAllCustom');
+  if(addAll) addAll.addEventListener('click', function(){
+    stageEl.querySelectorAll('.custom-cat-q').forEach(function(inp){
+      var v = inp.value.trim();
+      if(v){
+        var cat = inp.getAttribute('data-cat');
+        var exists = state.selectedQ.some(function(x){return x.catId===cat && x.q===v;});
+        if(!exists) state.selectedQ.push({catId:cat, q:v, a:''});
+      }
+    });
+    save(); renderQuestions();
+  });
+  stageEl.querySelectorAll('[data-remove]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.selectedQ.splice(parseInt(btn.getAttribute('data-remove'),10),1);
+      save(); renderQuestions();
+    });
+  });
+  document.getElementById('backBtn').addEventListener('click', function(){ goto(0); });
+  var nb = document.getElementById('nextBtn');
+  if(nb) nb.addEventListener('click', function(){ if(state.selectedQ.length>=3) goto(2); });
+}
+ 
+/* ---------------- stage 2: mic gear ---------------- */
+function shuffledMic(){
+  // stable shuffle based on seed so it doesn't re-shuffle every render
+  if(!window.__micShuffled){
+    var arr = MIC_STEPS.slice();
+    for(var i=arr.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
+    window.__micShuffled = arr;
+  }
+  return window.__micShuffled;
+}
+ 
+function renderGear(){
+  var items = shuffledMic();
+  var html = '<div class="panel"><h2>Собери порядок действий</h2>';
+  html += '<p>Пронумеруй шаги подключения петличного микрофона от 1 до 4 в правильном порядке.</p>';
+  items.forEach(function(it){
+    html += '<div class="order-item"><select data-id="'+it.id+'">';
+    html += '<option value="">—</option>';
+    for(var n=1;n<=4;n++){
+      var sel = state.micOrder[it.id]==String(n) ? ' selected':'';
+      html += '<option value="'+n+'"'+sel+'>'+n+'</option>';
+    }
+    html += '</select><span>'+esc(it.text)+'</span></div>';
+  });
+  html += '<button class="ghost" id="checkMic">Проверить порядок</button>';
+  html += '<div class="feedback" id="micFeedback"></div>';
+  html += '</div>';
+ 
+  html += '<div class="nav-btns"><button class="ghost" id="backBtn">Назад</button><button class="primary" id="nextBtn" '+(state.micChecked?'':'disabled')+'>Дальше — кадр</button></div>';
+  stageEl.innerHTML = html;
+ 
+  stageEl.querySelectorAll('select[data-id]').forEach(function(sel){
+    sel.addEventListener('change', function(){
+      state.micOrder[sel.getAttribute('data-id')] = sel.value;
+      save();
+    });
+  });
+  document.getElementById('checkMic').addEventListener('click', function(){
+    var order = MIC_STEPS.map(function(it){ return state.micOrder[it.id]; });
+    var byNum = {};
+    items.forEach(function(it){ byNum[state.micOrder[it.id]] = it.id; });
+    var guess = [byNum['1'],byNum['2'],byNum['3'],byNum['4']];
+    var ok = guess.every(function(v,i){ return v===MIC_CORRECT[i]; });
+    var fb = document.getElementById('micFeedback');
+    if(ok){
+      fb.className='feedback ok'; fb.textContent='Точно! Микрофон подключён правильно — можно двигаться дальше.';
+      state.micChecked = true;
+    } else {
+      fb.className='feedback bad'; fb.textContent='Пока не совсем так. Подсказка: сначала проверяем технику, потом прячем провод, крепим капсюль и в конце проверяем звук.';
+      state.micChecked = false;
+    }
+    save();
+    document.getElementById('nextBtn').disabled = !state.micChecked;
+  });
+  document.getElementById('backBtn').addEventListener('click', function(){ goto(1); });
+  var nb = document.getElementById('nextBtn');
+  nb.addEventListener('click', function(){ if(state.micChecked) goto(3); });
+}
+ 
+/* ---------------- stage 3: position ---------------- */
+function renderFrame(){
+  var html = '<div class="panel"><h2>Как встать перед камерой?</h2><p>Выбери правильный вариант.</p>';
+  POSITION_OPTIONS.forEach(function(opt){
+    var cls = 'quiz-opt';
+    if(state.posChecked && state.posChosen===opt.id){ cls += opt.ok ? ' correct':' wrong'; }
+    if(state.posChecked && opt.ok){ cls += ' correct'; }
+    html += '<button class="'+cls+'" data-opt="'+opt.id+'" '+(state.posChecked?'disabled':'')+'>'+esc(opt.text)+'</button>';
+  });
+  html += '<div class="feedback '+(state.posChecked ? (POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0].ok ? 'ok':'bad') : '')+'" style="'+(state.posChecked?'':'display:none;')+'">';
+  html += state.posChecked ? (POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0].ok ? 'Верно! Вполоборота и лицом к свету — так снимать удобнее всего.' : 'Не совсем: свет должен падать на лицо, а собеседник — стоять вполоборота, не вплотную и не спиной к окну.') : '';
+  html += '</div></div>';
+ 
+  html += '<div class="panel"><h2>Чёткая речь: перед записью проверь себя</h2>';
+  var d = state.diction;
+  html += checkRow('d1','Говорю громко и не тороплюсь', d.d1);
+  html += checkRow('d2','Смотрю на собеседника, а не в листок с вопросами', d.d2);
+  html += checkRow('d3','Вопросы под рукой, но я не читаю их слово в слово', d.d3);
+  html += '</div>';
+ 
+  var canProceed = state.posChecked && POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0].ok;
+  html += '<div class="nav-btns"><button class="ghost" id="backBtn">Назад</button><button class="primary" id="nextBtn" '+(canProceed?'':'disabled')+'>Дальше — съёмка</button></div>';
+  if(!canProceed) html += '<p class="footer-note">Выбери верный вариант положения в кадре, чтобы продолжить.</p>';
+ 
+  stageEl.innerHTML = html;
+ 
+  stageEl.querySelectorAll('[data-opt]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.posChosen = parseInt(btn.getAttribute('data-opt'),10);
+      state.posChecked = true;
+      save(); renderFrame();
+    });
+  });
+  ['d1','d2','d3'].forEach(function(key){
+    var el = document.getElementById(key);
+    if(el) el.addEventListener('change', function(){ state.diction[key]=el.checked; save(); });
+  });
+  document.getElementById('backBtn').addEventListener('click', function(){ goto(2); });
+  var nb = document.getElementById('nextBtn');
+  if(nb) nb.addEventListener('click', function(){ if(canProceed) goto(4); });
+}
+function checkRow(id, label, checked){
+  return '<label class="check-row"><input type="checkbox" id="'+id+'" '+(checked?'checked':'')+'> '+label+'</label>';
+}
+ 
+/* ---------------- stage 4: shoot ---------------- */
+function introText(){
+  var prof = currentProfession();
+  var name = prof ? prof.name : '…';
+  var school = state.school ? state.school : 'Х';
+  return 'Здравствуйте, в эфире «Моя первая газета», медиацентр школы №'+esc(school)+'! Сегодня мы узнаём, что же такое профессия «'+esc(name)+'», и что нужно сделать, где какие навыки получить, чтобы стать настоящим профессионалом!';
+}
+ 
+function renderShoot(){
+  recDot.classList.add('live');
+  var html = '<div class="intro-card"><b>Вступление — говорим всегда так:</b><br>'+introText()+'</div>';
+ 
+  html += '<div class="panel"><h2>Список вопросов для интервью</h2><p>Отмечай вопрос как заданный и коротко записывай, что ответил куратор — эти заметки станут заметкой в газету.</p>';
+  state.selectedQ.forEach(function(item, i){
+    var key = 'q'+i;
+    if(!state.askedNotes[key]) state.askedNotes[key] = {asked:false, note:''};
+    var rec = state.askedNotes[key];
+    html += '<div class="qcard">';
+    html += '<div class="qtext">'+(i+1)+'. '+esc(item.q)+'</div>';
+    if(item.a) html += '<div class="example">Пример ответа для тренировки: «'+esc(item.a)+'»</div>';
+    html += '<label class="asked-row"><input type="checkbox" data-asked="'+key+'" '+(rec.asked?'checked':'')+'> Вопрос задан</label>';
+    html += '<textarea rows="2" data-note="'+key+'" placeholder="Запиши здесь реальный ответ куратора...">'+esc(rec.note)+'</textarea>';
+    html += '</div>';
+  });
+  html += '</div>';
+ 
+  var askedCount = state.selectedQ.filter(function(_,i){ return state.askedNotes['q'+i] && state.askedNotes['q'+i].asked; }).length;
+  html += '<div class="panel"><p style="margin:0;">Задано вопросов: <b>'+askedCount+' из '+state.selectedQ.length+'</b>.</p></div>';
+ 
+  html += '<div class="nav-btns"><button class="ghost" id="backBtn">Назад</button><button class="primary" id="nextBtn">Дальше — собрать заметку</button></div>';
+ 
+  stageEl.innerHTML = html;
+ 
+  stageEl.querySelectorAll('[data-asked]').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var key = cb.getAttribute('data-asked');
+      state.askedNotes[key].asked = cb.checked;
+      save();
+    });
+  });
+  stageEl.querySelectorAll('[data-note]').forEach(function(ta){
+    ta.addEventListener('input', function(){
+      var key = ta.getAttribute('data-note');
+      state.askedNotes[key].note = ta.value;
+      save();
+    });
+  });
+  document.getElementById('backBtn').addEventListener('click', function(){ goto(3); });
+  document.getElementById('nextBtn').addEventListener('click', function(){ buildArticleDraft(); goto(5); });
+}
+ 
+/* ---------------- stage 5: article ---------------- */
+function buildArticleDraft(){
+  if(state.article && state.article.trim()) return; // don't overwrite edits
+  var prof = currentProfession();
+  var lines = [];
+  lines.push(introText().replace(/&amp;/g,'&').replace(/&quot;/g,'"'));
+  lines.push('');
+  state.selectedQ.forEach(function(item, i){
+    var rec = state.askedNotes['q'+i];
+    var note = rec && rec.note.trim() ? rec.note.trim() : (item.a || '(запиши сюда, что ответил куратор)');
+    lines.push('— ' + item.q);
+    lines.push(note);
+    lines.push('');
+  });
+  lines.push('Теперь мы точно знаем: за профессией «'+(prof?prof.name:'')+'» стоит настоящий труд и живой человек. Спасибо нашему герою за интервью — до новых встреч в эфире «Моей первой газеты»!');
+  state.article = lines.join('\n');
+  save();
+}
+ 
+function scoreSummary(){
+  var covered = new Set(state.selectedQ.map(function(x){return x.catId;})).size;
+  var micOk = state.micChecked;
+  var posOk = state.posChecked && POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0].ok;
+  var dictionOk = state.diction.d1 && state.diction.d2 && state.diction.d3;
+  return {covered:covered, micOk:micOk, posOk:posOk, dictionOk:dictionOk};
+}
+ 
+function renderArticle(){
+  recDot.classList.remove('live');
+  buildArticleDraft();
+  var s = scoreSummary();
+  var ready = s.micOk && s.posOk && s.covered>=4;
+ 
+  var html = '<div class="panel"><h2>Черновик заметки</h2><p>Отредактируй текст под себя — это финальный материал для газеты медиацентра.</p>';
+  html += '<textarea id="articleBox">'+esc(state.article)+'</textarea>';
+  html += '<div class="toolbar"><button class="ghost" id="copyBtn">Скопировать текст</button><button class="ghost" id="downloadBtn">Скачать .txt</button></div>';
+  html += '</div>';
+ 
+  html += '<div class="panel"><h2>Оценка защиты</h2>';
+  html += '<div class="score-card">';
+  html += '<div class="score-pill"><span class="num">'+s.covered+'/6</span>тем раскрыто</div>';
+  html += '<div class="score-pill"><span class="num">'+(s.micOk?'✅':'—')+'</span>микрофон</div>';
+  html += '<div class="score-pill"><span class="num">'+(s.posOk?'✅':'—')+'</span>кадр</div>';
+  html += '<div class="score-pill"><span class="num">'+(s.dictionOk?'✅':'—')+'</span>чёткая речь</div>';
+  html += '</div>';
+  html += '<p style="margin-top:10px;">'+(ready ? '🏆 Готов(а) к съёмке настоящего интервью — бери камеру и вперёд!' : 'Почти готово — вернись на прошлые шаги и закрепи то, что помечено «—».')+'</p>';
+  html += '</div>';
+ 
+  html += '<div class="nav-btns"><button class="ghost" id="backBtn">Назад</button><button class="ghost" id="restartBtn">Начать новую игру</button></div>';
+ 
+  stageEl.innerHTML = html;
+ 
+  document.getElementById('articleBox').addEventListener('input', function(e){ state.article = e.target.value; save(); });
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var box = document.getElementById('articleBox');
+    box.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(box.value).catch(function(){});
+    }
+    var btn = document.getElementById('copyBtn');
+    var old = btn.textContent; btn.textContent='Скопировано!';
+    setTimeout(function(){ btn.textContent=old; }, 1500);
+  });
+  document.getElementById('downloadBtn').addEventListener('click', function(){
+    var blob = new Blob([document.getElementById('articleBox').value], {type:'text/plain;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'zametka-'+(state.profId||'professiya')+'.txt';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('backBtn').addEventListener('click', function(){ goto(4); });
+  document.getElementById('restartBtn').addEventListener('click', function(){
+    if(confirm('Точно начать заново? Весь прогресс будет стёрт.')){
+      try{ localStorage.removeItem('mp_state_v1'); }catch(e){}
+      location.reload();
+    }
+  });
+}
+ 
+/* ---------------- main render ---------------- */
+function render(){
+  renderRail();
+  stepTagEl.textContent = 'Шаг '+(state.step+1)+' из 6 · '+STEP_NAMES[state.step];
+  titleEl.textContent = STAGE_META[state.step].title;
+  subEl.textContent = STAGE_META[state.step].sub;
+  recDot.classList.remove('live');
+  switch(state.step){
+    case 0: renderProfession(); break;
+    case 1: renderQuestions(); break;
+    case 2: renderGear(); break;
+    case 3: renderFrame(); break;
+    case 4: renderShoot(); break;
+    case 5: renderArticle(); break;
+  }
+}
+ 
+render();
+})();
+</script>
+</body>
+</html>
+ 
