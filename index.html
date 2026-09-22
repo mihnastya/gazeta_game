@@ -595,9 +595,16 @@ function renderFrame(){
     html += '<button class="'+cls+'" data-opt="'+opt.id+'">'+esc(opt.text)+'</button>';
 
   });
-  html += '<div class="feedback '+(state.posChecked ? (POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0].ok ? 'ok':'bad') : '')+'" style="'+(state.posChecked?'':'display:none;')+'">';
-  html += state.posChecked ? (POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0].ok ? 'Верно! Вполоборота и лицом к свету — так снимать удобнее всего.' : 'Не совсем: свет должен падать на лицо, а собеседник — стоять вполоборота, не вплотную и не спиной к окну.') : '';
+    // Выводим адаптивный фидбек
+  var currentOpt = state.posChosen ? POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0] : null;
+  var isCorrect = currentOpt ? currentOpt.ok : false;
+  
+  html += '<div class="feedback '+(state.posChecked ? (isCorrect ? 'ok':'bad') : '')+'" style="'+(state.posChecked?'':'display:none;')+'">';
+  if(state.posChecked) {
+    html += isCorrect ? 'Верно! Вполоборота и лицом к свету — так снимать удобнее всего.' : 'Не совсем: свет должен падать на лицо, а собеседник — стоять вполоборота, не вплотную и не спиной к окну. Попробуй выбрать другой вариант сверху!';
+  }
   html += '</div></div>';
+v>';
  
   html += '<div class="panel"><h2>Чёткая речь: перед записью проверь себя</h2>';
   var d = state.diction;
@@ -606,7 +613,8 @@ function renderFrame(){
   html += checkRow('d3','Вопросы под рукой, но я не читаю их слово в слово', d.d3);
   html += '</div>';
  
-  var canProceed = state.posChecked && POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;}).ok;
+    // Продвигаться дальше можно ТОЛЬКО если в итоге выбран ПРАВИЛЬНЫЙ вариант
+  var canProceed = state.posChecked && isCorrect;
   html += '<div class="nav-btns"><button class="ghost" id="backBtn">Назад</button><button class="primary" id="nextBtn" '+(canProceed?'':'disabled')+'>Дальше — съёмка</button></div>';
   if(!canProceed) html += '<p class="footer-note">Выбери верный вариант положения в кадре, чтобы продолжить.</p>';
  
