@@ -606,7 +606,7 @@ function renderFrame(){
   html += checkRow('d3','Вопросы под рукой, но я не читаю их слово в слово', d.d3);
   html += '</div>';
  
-  var canProceed = state.posChecked && POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;})[0].ok;
+  var canProceed = state.posChecked && POSITION_OPTIONS.filter(function(o){return o.id===state.posChosen;}).ok;
   html += '<div class="nav-btns"><button class="ghost" id="backBtn">Назад</button><button class="primary" id="nextBtn" '+(canProceed?'':'disabled')+'>Дальше — съёмка</button></div>';
   if(!canProceed) html += '<p class="footer-note">Выбери верный вариант положения в кадре, чтобы продолжить.</p>';
  
